@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 import lotto.domain.Lotto;
 import lotto.domain.LottoNumber;
 import lotto.domain.PurchaseAmount;
-import lotto.domain.WinningLotto;
 
 /** 콘솔에서 받은 구매 금액과 당첨 번호 문자열을 도메인 객체로 변환한다. */
 public class InputParser {
@@ -21,9 +20,28 @@ public class InputParser {
         }
     }
 
-    /** 쉼표로 구분한 당첨 번호 문자열을 검증된 당첨 로또 객체로 변환한다. */
-    public WinningLotto parseWinningLotto(String inputWinningNumbers) {
-        return new WinningLotto(new Lotto(parseNumbers(inputWinningNumbers)));
+    /** 쉼표로 구분한 당첨 번호 문자열을 검증된 로또 객체로 변환한다. */
+    public Lotto parseWinningNumbers(String inputWinningNumbers) {
+        return new Lotto(parseNumbers(inputWinningNumbers));
+    }
+
+    /** 보너스 볼 문자열을 검증된 로또 번호 객체로 변환한다. */
+    public LottoNumber parseBonusNumber(String inputBonusNumber) {
+        return parseLottoNumber(inputBonusNumber);
+    }
+
+    /** 수동 구매 수 문자열을 정수로 변환한다. */
+    public int parseManualLottoCount(String inputManualLottoCount) {
+        try {
+            return Integer.parseInt(inputManualLottoCount);
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("수동 구매 수는 숫자여야 합니다.");
+        }
+    }
+
+    /** 쉼표로 구분한 수동 로또 번호 문자열을 검증된 로또 객체로 변환한다. */
+    public Lotto parseManualLotto(String inputManualLottoNumbers) {
+        return new Lotto(parseNumbers(inputManualLottoNumbers));
     }
 
     /** 쉼표로 구분한 문자열을 각각의 로또 번호 객체로 변환한다. */

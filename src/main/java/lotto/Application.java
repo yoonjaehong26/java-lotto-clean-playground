@@ -2,8 +2,8 @@ package lotto;
 
 import lotto.controller.LottoController;
 import lotto.controller.InputParser;
-import lotto.domain.LottoGenerator;
 import lotto.domain.LottoPurchaseService;
+import lotto.domain.RandomLottoGenerator;
 import lotto.view.InputView;
 import lotto.view.OutputView;
 
@@ -26,7 +26,7 @@ public class Application {
      * @return 실행 준비가 된 로또 Controller
      */
     private static LottoController createLottoController() {
-        LottoPurchaseService lottoPurchaseService = new LottoPurchaseService(new LottoGenerator());
+        LottoPurchaseService lottoPurchaseService = new LottoPurchaseService(new RandomLottoGenerator());
         return new LottoController(
                 new InputView(),
                 new OutputView(),

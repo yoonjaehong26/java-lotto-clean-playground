@@ -8,17 +8,20 @@ import org.junit.jupiter.api.Test;
 class LottoPurchaseServiceTest {
 
     @Test
-    void 구매_금액에_해당하는_횟수만큼_자동_로또를_생성한다() {
+    void 수동_로또를_제외한_장수만큼_자동_로또를_생성한다() {
         CountingLottoGenerator lottoGenerator = new CountingLottoGenerator();
         LottoPurchaseService lottoPurchaseService = new LottoPurchaseService(lottoGenerator);
 
-        Lottos lottos = lottoPurchaseService.purchase(new PurchaseAmount(14_000));
+        LottoPurchase lottoPurchase = lottoPurchaseService.purchase(
+                new PurchaseAmount(14_000), List.of(lotto(1, 2, 3, 4, 5, 6)));
 
-        assertThat(lottos.size()).isEqualTo(14);
-        assertThat(lottoGenerator.generateCount()).isEqualTo(14);
+        assertThat(lottoPurchase.lottos().size()).isEqualTo(14);
+        assertThat(lottoPurchase.manualLottoCount()).isEqualTo(1);
+        assertThat(lottoPurchase.automaticLottoCount()).isEqualTo(13);
+        assertThat(lottoGenerator.generateCount()).isEqualTo(13);
     }
 
-    private static class CountingLottoGenerator extends LottoGenerator {
+    private static class CountingLottoGenerator implements LottoGenerator {
 
         private int count;
 
@@ -37,5 +40,11 @@ class LottoPurchaseServiceTest {
                     .mapToObj(LottoNumber::new)
                     .toList();
         }
+    }
+
+    private Lotto lotto(int... values) {
+        return new Lotto(java.util.Arrays.stream(values)
+                .mapToObj(LottoNumber::new)
+                .toList());
     }
 }

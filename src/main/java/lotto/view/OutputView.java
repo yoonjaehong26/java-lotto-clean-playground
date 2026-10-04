@@ -3,6 +3,7 @@ package lotto.view;
 import java.util.List;
 import lotto.domain.Lotto;
 import lotto.domain.LottoNumber;
+import lotto.domain.LottoPurchase;
 import lotto.domain.LottoStatistics;
 import lotto.domain.LottoRank;
 import lotto.domain.Lottos;
@@ -15,10 +16,16 @@ public class OutputView {
      *
      * @param lottos 구매한 여러 장의 로또
      */
-    public void printPurchaseResult(Lottos lottos) {
+    public void printPurchaseResult(LottoPurchase lottoPurchase) {
         printBlankLine();
-        System.out.println(lottos.size() + "개를 구매했습니다.");
-        lottos.lottos().forEach(this::printLotto);
+        printPurchaseCount(lottoPurchase);
+        lottoPurchase.lottos().lottos().forEach(this::printLotto);
+    }
+
+    /** 수동과 자동으로 구매한 로또 장수를 콘솔에 출력한다. */
+    private void printPurchaseCount(LottoPurchase lottoPurchase) {
+        System.out.println("수동으로 " + lottoPurchase.manualLottoCount() + "장, 자동으로 "
+                + lottoPurchase.automaticLottoCount() + "개를 구매했습니다.");
     }
 
     /**
@@ -51,7 +58,7 @@ public class OutputView {
 
     /** 당첨 등수 하나에 해당하는 상금과 당첨 장수를 출력한다. */
     private void printWinningResult(LottoRank lottoRank, LottoStatistics lottoStatistics) {
-        System.out.println(lottoRank.matchCount() + "개 일치 ("
+        System.out.println(lottoRank.resultDescription() + " ("
                 + lottoRank.prize() + "원)- " + lottoStatistics.winningCount(lottoRank) + "개");
     }
 

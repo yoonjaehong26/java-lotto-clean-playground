@@ -44,8 +44,11 @@ public final class Lottos {
      * @return 당첨 규칙별 당첨 장수와 수익률을 가진 통계
      */
     public LottoStatistics calculateStatistics(WinningLotto winningLotto, PurchaseAmount purchaseAmount) {
-        List<Integer> matchCounts = lottos.stream().map(winningLotto::countMatchingNumbers).toList();
-        return new LottoStatistics(matchCounts, purchaseAmount);
+        List<LottoRank> lottoRanks = lottos.stream()
+                .map(winningLotto::findRank)
+                .flatMap(java.util.Optional::stream)
+                .toList();
+        return new LottoStatistics(lottoRanks, purchaseAmount);
     }
 
     /**

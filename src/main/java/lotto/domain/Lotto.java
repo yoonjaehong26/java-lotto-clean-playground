@@ -72,7 +72,7 @@ public final class Lotto {
      * @param lottoNumber 포함 여부를 확인할 로또 번호
      * @return 이 로또에 같은 번호가 있으면 true, 없으면 false
      */
-    private boolean contains(LottoNumber lottoNumber) {
+    public boolean contains(LottoNumber lottoNumber) {
         return numbers.contains(lottoNumber);
     }
 }

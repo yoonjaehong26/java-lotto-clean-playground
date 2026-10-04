@@ -3,6 +3,7 @@ package lotto.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -30,5 +31,21 @@ class PurchaseAmountTest {
         assertThatThrownBy(() -> new PurchaseAmount(value))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("구매 금액은 1,000원 단위여야 합니다.");
+    }
+
+    @Test
+    void 수동_구매_수만큼_자동_구매_가능_장수를_계산한다() {
+        PurchaseAmount purchaseAmount = new PurchaseAmount(14_000);
+
+        assertThat(purchaseAmount.automaticLottoCount(3)).isEqualTo(11);
+    }
+
+    @Test
+    void 수동_구매_수가_구매_가능_장수를_넘으면_예외가_발생한다() {
+        PurchaseAmount purchaseAmount = new PurchaseAmount(1_000);
+
+        assertThatThrownBy(() -> purchaseAmount.automaticLottoCount(2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("수동 구매 수는 구매 가능한 로또 장수 이하여야 합니다.");
     }
 }

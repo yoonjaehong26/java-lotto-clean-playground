@@ -12,7 +12,7 @@ class LottoStatisticsTest {
     @Test
     void 일치_개수에_따라_당첨_통계와_수익률을_계산한다() {
         LottoStatistics lottoStatistics = lottos(1, 2, 3, 4, 5, 6)
-                .calculateStatistics(winningLotto(1, 2, 3, 7, 8, 9), new PurchaseAmount(1_000));
+                .calculateStatistics(winningLotto(1, 2, 3, 7, 8, 9, 10), new PurchaseAmount(1_000));
 
         assertThat(lottoStatistics.winningCount(LottoRank.THREE_MATCH)).isEqualTo(1);
         assertThat(lottoStatistics.winningCount(LottoRank.FOUR_MATCH)).isZero();
@@ -25,7 +25,7 @@ class LottoStatisticsTest {
         purchasedLottos.add(lotto(1, 2, 3, 7, 8, 9));
         Lottos lottos = new Lottos(purchasedLottos);
         LottoStatistics lottoStatistics = lottos.calculateStatistics(
-                winningLotto(1, 2, 3, 4, 5, 6), new PurchaseAmount(14_000));
+                winningLotto(1, 2, 3, 4, 5, 6, 13), new PurchaseAmount(14_000));
 
         assertThat(lottoStatistics.profitRate()).isEqualByComparingTo("0.35");
     }
@@ -34,8 +34,19 @@ class LottoStatisticsTest {
         return new Lottos(List.of(lotto(values)));
     }
 
+    @Test
+    void 일치_번호가_5개이고_보너스_볼도_일치하면_2등이다() {
+        LottoStatistics lottoStatistics = lottos(1, 2, 3, 4, 5, 7)
+                .calculateStatistics(winningLotto(1, 2, 3, 4, 5, 6, 7), new PurchaseAmount(1_000));
+
+        assertThat(lottoStatistics.winningCount(LottoRank.FIVE_MATCH_BONUS)).isEqualTo(1);
+        assertThat(lottoStatistics.profitRate()).isEqualByComparingTo("30000.00");
+    }
+
     private WinningLotto winningLotto(int... values) {
-        return new WinningLotto(lotto(values));
+        int bonusNumber = values[values.length - 1];
+        int[] winningNumbers = java.util.Arrays.copyOf(values, values.length - 1);
+        return new WinningLotto(lotto(winningNumbers), new LottoNumber(bonusNumber));
     }
 
     private Lotto lotto(int... values) {

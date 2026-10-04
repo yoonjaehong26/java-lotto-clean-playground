@@ -3,7 +3,7 @@ package lotto.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 구매 금액에 맞춰 자동 생성 로또 여러 장을 발급한다. */
+/** 수동 로또와 자동 생성 로또를 합쳐 구매 결과를 만든다. */
 public class LottoPurchaseService {
 
     private final LottoGenerator lottoGenerator;
@@ -18,25 +18,28 @@ public class LottoPurchaseService {
     }
 
     /**
-     * 구매 금액에 해당하는 장수만큼 자동 로또를 생성해 반환한다.
+     * 수동 로또를 제외한 구매 가능 장수만큼 자동 로또를 생성해 반환한다.
      *
      * @param purchaseAmount 로또 구매 금액
-     * @return 자동으로 발급된 여러 장의 로또
+     * @param manualLottos 사용자가 수동으로 선택한 로또 목록
+     * @return 수동과 자동 로또를 합친 구매 결과
      */
-    public Lottos purchase(PurchaseAmount purchaseAmount) {
-        List<Lotto> purchasedLottos = generateLottos(purchaseAmount);
-        return new Lottos(purchasedLottos);
+    public LottoPurchase purchase(PurchaseAmount purchaseAmount, List<Lotto> manualLottos) {
+        int automaticLottoCount = purchaseAmount.automaticLottoCount(manualLottos.size());
+        List<Lotto> purchasedLottos = new ArrayList<>(manualLottos);
+        purchasedLottos.addAll(generateLottos(automaticLottoCount));
+        return new LottoPurchase(new Lottos(purchasedLottos), manualLottos.size());
     }
 
     /**
-     * 구매 장수만큼 생성기를 호출해 로또 목록을 만든다.
+     * 자동 구매 장수만큼 생성기를 호출해 로또 목록을 만든다.
      *
-     * @param purchaseAmount 로또 구매 금액
-     * @return 구매 장수와 동일한 개수의 로또 목록
+     * @param automaticLottoCount 자동으로 생성할 로또 장수
+     * @return 자동 구매 장수와 동일한 개수의 로또 목록
      */
-    private List<Lotto> generateLottos(PurchaseAmount purchaseAmount) {
+    private List<Lotto> generateLottos(int automaticLottoCount) {
         List<Lotto> purchasedLottos = new ArrayList<>();
-        for (int count = 0; count < purchaseAmount.lottoCount(); count++) {
+        for (int count = 0; count < automaticLottoCount; count++) {
             purchasedLottos.add(lottoGenerator.generate());
         }
         return purchasedLottos;

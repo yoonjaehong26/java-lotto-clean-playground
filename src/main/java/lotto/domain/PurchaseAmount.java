@@ -25,6 +25,19 @@ public record PurchaseAmount(int value) {
         return value / LOTTO_PRICE;
     }
 
+    /** 수동 구매 장수를 제외한 자동 구매 가능 장수를 계산한다. */
+    public int automaticLottoCount(int manualLottoCount) {
+        validateManualLottoCount(manualLottoCount);
+        return lottoCount() - manualLottoCount;
+    }
+
+    /** 수동 구매 장수가 구매 가능 장수 범위 안에 있는지 검증한다. */
+    public void validateManualLottoCount(int manualLottoCount) {
+        if (manualLottoCount < 0 || manualLottoCount > lottoCount()) {
+            throw new IllegalArgumentException("수동 구매 수는 구매 가능한 로또 장수 이하여야 합니다.");
+        }
+    }
+
     /**
      * 구매 금액이 로또 한 장 가격 이상인지 확인한다.
      *
@@ -48,4 +61,5 @@ public record PurchaseAmount(int value) {
             throw new IllegalArgumentException("구매 금액은 1,000원 단위여야 합니다.");
         }
     }
+
 }

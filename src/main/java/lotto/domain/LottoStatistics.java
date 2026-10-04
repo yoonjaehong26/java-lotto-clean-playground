@@ -15,13 +15,13 @@ public final class LottoStatistics {
     private final BigDecimal profitRate;
 
     /**
-     * 로또별 일치 개수와 구매 금액으로 당첨 결과와 수익률을 생성한다.
+     * 구매 로또의 당첨 등수 목록과 구매 금액으로 통계와 수익률을 생성한다.
      *
-     * @param matchCounts 구매한 로또마다 계산한 일치 번호 개수 목록
+     * @param lottoRanks 구매한 로또 중 당첨된 로또의 등수 목록
      * @param purchaseAmount 로또 구매 금액
      */
-    public LottoStatistics(List<Integer> matchCounts, PurchaseAmount purchaseAmount) {
-        this.winningCounts = createWinningCounts(matchCounts);
+    public LottoStatistics(List<LottoRank> lottoRanks, PurchaseAmount purchaseAmount) {
+        this.winningCounts = createWinningCounts(lottoRanks);
         this.profitRate = calculateProfitRate(purchaseAmount);
     }
 
@@ -36,15 +36,15 @@ public final class LottoStatistics {
     }
 
     /** 모든 등수에 해당하는 당첨 로또 장수를 순서대로 계산한다. */
-    private Map<LottoRank, Integer> createWinningCounts(List<Integer> matchCounts) {
+    private Map<LottoRank, Integer> createWinningCounts(List<LottoRank> lottoRanks) {
         Map<LottoRank, Integer> counts = new LinkedHashMap<>();
-        LottoRank.ranks().forEach(lottoRank -> counts.put(lottoRank, countWinningLottos(lottoRank, matchCounts)));
+        LottoRank.ranks().forEach(lottoRank -> counts.put(lottoRank, countWinningLottos(lottoRank, lottoRanks)));
         return Map.copyOf(counts);
     }
 
     /** 특정 등수 조건을 만족한 로또 장수를 계산한다. */
-    private int countWinningLottos(LottoRank lottoRank, List<Integer> matchCounts) {
-        return Math.toIntExact(matchCounts.stream().filter(lottoRank::matches).count());
+    private int countWinningLottos(LottoRank lottoRank, List<LottoRank> lottoRanks) {
+        return Math.toIntExact(lottoRanks.stream().filter(lottoRank::equals).count());
     }
 
     /** 당첨 결과 전체의 총상금으로 수익률을 계산한다. */
